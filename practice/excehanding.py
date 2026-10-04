@@ -1,4 +1,4 @@
-
+#this is expetion handling code
 try:
     a=int(input("ENter a Number:"))
     b=int(input("ENter an other Number:"))
