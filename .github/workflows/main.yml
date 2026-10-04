@@ -1,6 +1,5 @@
 name: Python CI
 
-# When should the workflow run?
 on:
   push:
     branches:
@@ -10,28 +9,52 @@ on:
     branches:
       - main
 
+  # Manual execution
+  workflow_dispatch:
+    inputs:
+      env:
+        description: "Select environment"
+        required: true
+        default: "dev"
+        type: choice
+        options:
+          - dev
+          - acc
+          - prod
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Get source code
+
+      # 1. Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Install Python
+      # 2. Setup Python
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # 3. Install dependencies
+      # 3. Show selected environment
+      - name: Show Environment
+        run: |
+          echo "Selected Environment: ${{ inputs.env }}"
+
+      # 4. Install dependencies
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Run tests
-      - name: Run tests
+      # 5. Run application
+      - name: Run Application
+        run: |
+          python app.py --env ${{ inputs.env }}
+
+      # 6. Run tests
+      - name: Run Tests
         run: |
           pytest
